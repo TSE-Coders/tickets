@@ -4,19 +4,22 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/TSE-Coders/tickets/internal/env"
+	"github.com/TSE-Coders/tickets/internal/config"
+	"github.com/TSE-Coders/tickets/internal/generator"
 	"github.com/labstack/echo/v4"
 )
 
-func init() {
-	env.LoadEnvVars()
-}
-
 func main() {
-	e := echo.New()
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "Hello, World!")
+	env := config.LoadEnvVars()
+	g := generator.NewGenerator()
+	httpServer := echo.New()
+
+	httpServer.GET("/health", func(c echo.Context) error {
+		return c.String(http.StatusOK, "")
+	})
+	httpServer.GET("/tickets/random", func(c echo.Context) error {
+		return c.JSON(200, g.GenetateRandomTicket())
 	})
 
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", env.Env.PORT)))
+	httpServer.Logger.Fatal(httpServer.Start(fmt.Sprintf(":%s", env.PORT)))
 }
