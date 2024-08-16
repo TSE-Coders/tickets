@@ -1,25 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"net/http"
+	"log"
 
 	"github.com/TSE-Coders/tickets/internal/config"
-	"github.com/TSE-Coders/tickets/internal/generator"
-	"github.com/labstack/echo/v4"
+	"github.com/TSE-Coders/tickets/internal/server"
 )
 
 func main() {
 	env := config.LoadEnvVars()
-	g := generator.NewGenerator()
-	httpServer := echo.New()
+	appConfig := server.NewHttpConfig().
+		WithPort(env.PORT)
 
-	httpServer.GET("/health", func(c echo.Context) error {
-		return c.String(http.StatusOK, "")
-	})
-	httpServer.GET("/tickets/random", func(c echo.Context) error {
-		return c.JSON(200, g.GenetateRandomTicket())
-	})
-
-	httpServer.Logger.Fatal(httpServer.Start(fmt.Sprintf(":%s", env.PORT)))
+	app := server.NewHttpServer(appConfig)
+	if err := app.Run(); err != nil {
+		log.Fatalf("Application Crashed: %s", err)
+	}
 }
