@@ -44,6 +44,15 @@ func NewAppServer(config AppConfig) App {
 	a.config.Server.GET("/health-check", a.healthCheck)
 	a.config.Server.GET("/tickets/random", a.getRandomTicket)
 
+	job := scheduler.New(15, true, func() error {
+		t := a.config.Generator.GenetateRandomTicket()
+		fmt.Printf("Ticket Created: %s\n", t.TicketID)
+
+		return nil
+	})
+
+	a.AddBackgroundJob(*job)
+
 	return a
 }
 
