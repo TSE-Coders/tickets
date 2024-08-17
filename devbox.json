@@ -3,7 +3,8 @@
   "packages": [
     "go@1.22.5",
     "go-task@3.38.0",
-    "air@1.52.3"
+    "air@1.52.3",
+    "postgresql@15.6"
   ],
   "shell": {
     "init_hook": [
