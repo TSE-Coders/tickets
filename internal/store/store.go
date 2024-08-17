@@ -52,6 +52,22 @@ func (db *DB) connectionLoop() {
 	}
 }
 
+func (db *DB) SeedDB(regions []types.Region, products []types.Product) error {
+	return nil
+}
+
+func (db *DB) InsertRegion(region types.Region) error {
+	resultChan := make(chan queries.InsertRegionResult)
+	query := queries.NewInsertRegionQuery(resultChan, region)
+	db.QueryBuffer <- query
+
+	queryBufferLength := len(db.QueryBuffer)
+	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
+
+	result := <-resultChan
+	return result.Err
+}
+
 func MigrateDB(migrations fs.FS) error {
 	config := NewDBConnectionConfig().WithPassword("password")
 	db, err := NewDBConnection(config)
@@ -72,20 +88,4 @@ func MigrateDB(migrations fs.FS) error {
 	}
 
 	return nil
-}
-
-func (db *DB) SeedDB(regions []types.Region, products []types.Product) error {
-	return nil
-}
-
-func (db *DB) InsertRegion(region types.Region) error {
-	resultChan := make(chan queries.InsertRegionResult)
-	query := queries.NewInsertRegionQuery(resultChan, region)
-	db.QueryBuffer <- query
-
-	queryBufferLength := len(db.QueryBuffer)
-	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
-
-	result := <-resultChan
-	return result.Err
 }

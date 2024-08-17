@@ -145,6 +145,54 @@
         }
       }
     },
+    "goose@3.21.1": {
+      "last_modified": "2024-07-31T08:48:38Z",
+      "resolved": "github:NixOS/nixpkgs/c3392ad349a5227f4a3464dce87bcc5046692fce#goose",
+      "source": "devbox-search",
+      "version": "3.21.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/zajx1yd2y8aljznws9g2vaxbgair8lh2-goose-3.21.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/zajx1yd2y8aljznws9g2vaxbgair8lh2-goose-3.21.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/70v3xb60m3qj55il2way7dm39qjmb8wl-goose-3.21.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/70v3xb60m3qj55il2way7dm39qjmb8wl-goose-3.21.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xwbfm7ypihh6rgq5z9zrxg58kwxwf95f-goose-3.21.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xwbfm7ypihh6rgq5z9zrxg58kwxwf95f-goose-3.21.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/g4ixx2k6pyi54ww7lqzqsc6yh1lanzr2-goose-3.21.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/g4ixx2k6pyi54ww7lqzqsc6yh1lanzr2-goose-3.21.1"
+        }
+      }
+    },
     "postgresql@15.6": {
       "last_modified": "2024-05-21T17:27:28Z",
       "plugin_version": "0.0.2",

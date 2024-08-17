@@ -70,6 +70,8 @@ func NewAppServer(config AppConfig) (App, error) {
 }
 
 func (a App) Run() error {
+	fmt.Println("Starting Application...")
+
 	for _, job := range a.config.BackgroundJobs {
 		job.Run()
 	}

@@ -2,14 +2,36 @@
 
 version: '3'
 
+dotenv: ["dev.env"]
+
+vars:
+  CONNSTRING: postgresql://$POSTGRES_USER:$POSTGRES_PASSWORD@$POSTGRES_HOST:5432/$DATABASE_NAME
+
 tasks:
   default:
+    silent: true
     cmds:
       - task --list-all
-    silent: true
   
   dev:
     dotenv: ['dev.env']
-    cmds:
-      - air
     silent: true
+    cmds:
+      - task migrations -- up
+      - air
+
+  migrations:new:
+    silent: true
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: cmd/embed/migrations
+    cmds:
+    - GOOSE_DBSTRING={{.CONNSTRING}} goose create {{.CLI_ARGS}} sql
+
+  migrations:
+    silent: true
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: cmd/embed/migrations
+    cmds:
+    - GOOSE_DBSTRING={{.CONNSTRING}} goose {{.CLI_ARGS}}

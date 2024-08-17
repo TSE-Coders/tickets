@@ -1,0 +1,12 @@
+version: "0.5"
+
+processes:
+  app:
+   command: task dev
+   availability:
+    restart: "always"
+  
+  nginx:
+    command: docker run -p 8080:80 nginx
+    availability:
+      restart: "always"
