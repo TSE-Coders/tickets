@@ -1,0 +1,15 @@
+# https://taskfile.dev
+
+version: '3'
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true
+  
+  dev:
+    dotenv: ['dev.env']
+    cmds:
+      - air
+    silent: true
