@@ -49,13 +49,16 @@ func (db *DB) connectionLoop() {
 	}
 }
 
+func (db *DB) loadDBQuery(query QueryExecutor) {
+	db.QueryBuffer <- query
+	queryBufferLength := len(db.QueryBuffer)
+	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
+}
+
 func (db *DB) InsertRegion(region types.Region) error {
 	resultChan := make(chan queries.InsertRegionResult)
 	query := queries.NewInsertRegionQuery(resultChan, region)
-	db.QueryBuffer <- query
-
-	queryBufferLength := len(db.QueryBuffer)
-	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
+	db.loadDBQuery(query)
 
 	result := <-resultChan
 	return result.Err
@@ -64,11 +67,26 @@ func (db *DB) InsertRegion(region types.Region) error {
 func (db *DB) InsertProduct(product types.Product) error {
 	resultChan := make(chan queries.InsertProductResult)
 	query := queries.NewInsertProductQuery(resultChan, product)
-	db.QueryBuffer <- query
-
-	queryBufferLength := len(db.QueryBuffer)
-	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
+	db.loadDBQuery(query)
 
 	result := <-resultChan
 	return result.Err
+}
+
+func (db *DB) GetAllRegions() ([]types.Region, error) {
+	resultChan := make(chan queries.SelectRegionsResult)
+	query := queries.NewSelectRegionsQuery(resultChan)
+	db.loadDBQuery(query)
+
+	result := <-resultChan
+	return result.Regions, result.Err
+}
+
+func (db *DB) GetAllProducts() ([]types.Product, error) {
+	resultChan := make(chan queries.SelectProductsResult)
+	query := queries.NewSelectProductsQuery(resultChan)
+	db.loadDBQuery(query)
+
+	result := <-resultChan
+	return result.Products, result.Err
 }
