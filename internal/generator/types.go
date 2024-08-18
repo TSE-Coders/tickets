@@ -4,7 +4,8 @@ import "github.com/TSE-Coders/tickets/internal/store"
 
 type Generator struct {
 	ticketCount uint
-	db          *store.DB
+	storeConfig store.DBConnectionConfig
+	store       *store.DB
 }
 
 type Ticket struct {

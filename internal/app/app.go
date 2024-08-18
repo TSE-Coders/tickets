@@ -5,66 +5,42 @@ import (
 
 	"github.com/TSE-Coders/tickets/internal/generator"
 	"github.com/TSE-Coders/tickets/internal/scheduler"
-	"github.com/TSE-Coders/tickets/internal/store"
 	"github.com/labstack/echo/v4"
 )
 
 type App struct {
-	config       AppConfig
-	DBConnection store.DB
-}
-
-type AppConfig struct {
-	Server         *echo.Echo
-	Port           string
-	Generator      generator.Generator
+	config         AppConfig
 	BackgroundJobs []scheduler.Schedule
-	StoreConfig    store.DBConnectionConfig
+	Generator      generator.Generator
+	Server         *echo.Echo
 }
 
-func NewAppConfig() AppConfig {
-	storeConfig := store.NewDBConnectionConfig()
-
-	return AppConfig{
-		Server:      echo.New(),
-		Port:        "3000",
-		Generator:   generator.NewGenerator(),
-		StoreConfig: storeConfig,
-	}
-}
-
-func (a AppConfig) WithPort(p string) AppConfig {
-	a.Port = p
-	return a
-}
-
-func (a *App) AddBackgroundJob(job scheduler.Schedule) {
-	a.config.BackgroundJobs = append(a.config.BackgroundJobs, job)
-}
-
-func NewAppServer(config AppConfig) (App, error) {
-	// Setup App's Database
-	dbConnection, err := store.NewDBConnection(config.StoreConfig)
-	if err != nil {
-		return App{}, err
-	}
-
+func NewApp(config AppConfig) (App, error) {
 	a := App{
-		config:       config,
-		DBConnection: *dbConnection,
+		config: config,
 	}
-
-	// Setup App's HTTP Server handlers
-	a.config.Server.GET("/health-check", a.healthCheck)
-	a.config.Server.GET("/tickets/random", a.getRandomTicket)
 
 	// Setup App's background job
-	job := scheduler.New(15, true, func() error {
-		t := a.config.Generator.GenetateRandomTicket()
+	job := scheduler.New(3, true, func() error {
+		t := a.Generator.GenetateRandomTicket()
 		fmt.Printf("Ticket Created: %s\n", t.TicketID)
 		return nil
 	})
 	a.AddBackgroundJob(*job)
+
+	// Setup App's Generator
+	g, err := generator.NewGenerator(a.config.StoreConfig)
+	if err != nil {
+		return a, err
+	}
+	a.Generator = g
+
+	// Setup App's HTTP Server handlers
+	a.Server = echo.New()
+	a.Server.HideBanner = true
+	a.Server.HidePort = true
+	a.Server.GET("/health-check", a.healthCheck)
+	a.Server.GET("/tickets/random", a.getRandomTicket)
 
 	return a, nil
 }
@@ -72,10 +48,14 @@ func NewAppServer(config AppConfig) (App, error) {
 func (a App) Run() error {
 	fmt.Println("Starting Application...")
 
-	for _, job := range a.config.BackgroundJobs {
+	for _, job := range a.BackgroundJobs {
 		job.Run()
 	}
 
 	port := fmt.Sprintf(":%s", a.config.Port)
-	return a.config.Server.Start(port)
+	return a.Server.Start(port)
+}
+
+func (a *App) AddBackgroundJob(job scheduler.Schedule) {
+	a.BackgroundJobs = append(a.BackgroundJobs, job)
 }

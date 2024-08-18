@@ -11,5 +11,5 @@ func (a App) healthCheck(c echo.Context) error {
 }
 
 func (a App) getRandomTicket(c echo.Context) error {
-	return c.JSON(200, a.config.Generator.GenetateRandomTicket())
+	return c.JSON(200, a.Generator.GenetateRandomTicket())
 }

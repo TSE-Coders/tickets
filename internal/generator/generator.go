@@ -7,15 +7,23 @@ import (
 	"github.com/TSE-Coders/tickets/internal/store"
 )
 
-func NewGenerator(db *store.DB) Generator {
+func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 	g := Generator{
 		ticketCount: 0,
-		db:          db,
+		storeConfig: storeConfig,
 	}
+
+	store, err := store.NewDBConnection(storeConfig)
+	if err != nil {
+		return g, err
+	}
+
+	g.store = store
+
 	g.loadAvailableProducts()
 	g.loadAvailableRegions()
 
-	return g
+	return g, nil
 }
 
 func (g *Generator) GenetateTicket() Ticket {
@@ -39,7 +47,7 @@ func (g *Generator) GenetateRandomTicket() Ticket {
 }
 
 func (g *Generator) loadAvailableProducts() error {
-	products, err := g.db.GetAllProducts()
+	products, err := g.store.GetAllProducts()
 	if err != nil {
 		return nil
 	}
@@ -51,7 +59,7 @@ func (g *Generator) loadAvailableProducts() error {
 }
 
 func (g *Generator) loadAvailableRegions() error {
-	regions, err := g.db.GetAllRegions()
+	regions, err := g.store.GetAllRegions()
 	if err != nil {
 		return nil
 	}

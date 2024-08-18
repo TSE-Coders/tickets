@@ -12,7 +12,7 @@ func main() {
 	appConfig := app.NewAppConfig()
 	appConfig = appConfig.WithPort(env.PORT)
 
-	app, err := app.NewAppServer(appConfig)
+	app, err := app.NewApp(appConfig)
 	if err != nil {
 		log.Fatalf("Failed to initialize the Application: %s", err)
 	}
