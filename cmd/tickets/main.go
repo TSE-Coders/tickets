@@ -1,16 +1,10 @@
 package main
 
 import (
-	"embed"
 	"log"
 
 	"github.com/TSE-Coders/tickets/internal/app"
 	"github.com/TSE-Coders/tickets/internal/config"
-)
-
-var (
-	// //go:embed embed/migrations/*.sql
-	migrations embed.FS
 )
 
 func main() {

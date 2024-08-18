@@ -14,17 +14,22 @@ tasks:
       - task --list-all
   
   dev:
-    dotenv: ['dev.env']
     silent: true
     cmds:
       - task migrations -- up
       - air
 
+  seed:
+    silent: true
+    cmds:
+      - go build -o ./tmp/seed cmd/seed/main.go
+      - ./tmp/seed
+
   migrations:new:
     silent: true
     env:
       GOOSE_DRIVER: postgres
-      GOOSE_MIGRATION_DIR: cmd/embed/migrations
+      GOOSE_MIGRATION_DIR: migrations
     cmds:
     - GOOSE_DBSTRING={{.CONNSTRING}} goose create {{.CLI_ARGS}} sql
 
@@ -32,6 +37,6 @@ tasks:
     silent: true
     env:
       GOOSE_DRIVER: postgres
-      GOOSE_MIGRATION_DIR: cmd/embed/migrations
+      GOOSE_MIGRATION_DIR: migrations
     cmds:
     - GOOSE_DBSTRING={{.CONNSTRING}} goose {{.CLI_ARGS}}

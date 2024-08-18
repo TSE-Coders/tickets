@@ -1,0 +1,30 @@
+{
+  "regions": [
+    {
+      "name": "NYC"
+    },
+    {
+      "name": "Boston"
+    },
+    {
+      "name": "Denver"
+    }
+  ],
+  "products": [
+    {
+      "name": "APM"
+    },
+    {
+      "name": "DBM"
+    },
+    {
+      "name": "Monitors"
+    },
+    {
+      "name": "Containers"
+    },
+    {
+      "name": "Synthetics/RUM"
+    }
+  ]
+}

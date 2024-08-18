@@ -1,8 +1,6 @@
 package queries
 
 import (
-	"fmt"
-
 	"github.com/TSE-Coders/tickets/internal/types"
 	"github.com/jmoiron/sqlx"
 )
@@ -41,7 +39,7 @@ func (q InsertProductQuery) Execute(dbConnection *sqlx.DB) {
 	_, err := dbConnection.NamedQuery(q.SQL[0], q.Product)
 	if err != nil {
 		q.Result <- InsertProductResult{
-			Err: fmt.Errorf("failed to insert region: %q", err),
+			Err: err,
 		}
 	}
 	q.Result <- InsertProductResult{

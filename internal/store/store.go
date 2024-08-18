@@ -2,15 +2,12 @@ package store
 
 import (
 	"fmt"
-	"io/fs"
 	"log/slog"
-	"os"
 
 	"github.com/TSE-Coders/tickets/internal/queries"
 	"github.com/TSE-Coders/tickets/internal/types"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"github.com/pressly/goose/v3"
 )
 
 type DB struct {
@@ -52,10 +49,6 @@ func (db *DB) connectionLoop() {
 	}
 }
 
-func (db *DB) SeedDB(regions []types.Region, products []types.Product) error {
-	return nil
-}
-
 func (db *DB) InsertRegion(region types.Region) error {
 	resultChan := make(chan queries.InsertRegionResult)
 	query := queries.NewInsertRegionQuery(resultChan, region)
@@ -68,24 +61,14 @@ func (db *DB) InsertRegion(region types.Region) error {
 	return result.Err
 }
 
-func MigrateDB(migrations fs.FS) error {
-	config := NewDBConnectionConfig().WithPassword("password")
-	db, err := NewDBConnection(config)
-	if err != nil {
-		return err
-	}
-	defer db.Connection.Close()
+func (db *DB) InsertProduct(product types.Product) error {
+	resultChan := make(chan queries.InsertProductResult)
+	query := queries.NewInsertProductQuery(resultChan, product)
+	db.QueryBuffer <- query
 
-	goose.SetBaseFS(migrations)
-	if err = goose.SetDialect(config.DatabaseDriver); err != nil {
-		slog.Error("Failed to select a dialect", "error", err)
-		os.Exit(1)
-	}
+	queryBufferLength := len(db.QueryBuffer)
+	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
 
-	if err = goose.Up(db.Connection.DB, "embed/migrations"); err != nil {
-		slog.Error("Failed to apply migrations", "error", err)
-		os.Exit(1)
-	}
-
-	return nil
+	result := <-resultChan
+	return result.Err
 }

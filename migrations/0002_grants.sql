@@ -1,0 +1,15 @@
+-- +goose Up
+-- +goose StatementBegin
+GRANT ALL PRIVILEGES ON DATABASE app TO admin;
+GRANT USAGE on SCHEMA tickets TO admin;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA tickets TO admin;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA tickets TO admin;
+-- +goose StatementEnd
+
+-- +goose Down
+-- +goose StatementBegin
+REVOKE USAGE, SELECT ON ALL SEQUENCES IN SCHEMA tickets FROM admin;
+REVOKE SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA tickets FROM admin;
+REVOKE USAGE ON SCHEMA tickets FROM admin;
+REVOKE ALL PRIVILEGES ON DATABASE app FROM admin;
+-- +goose StatementEnd

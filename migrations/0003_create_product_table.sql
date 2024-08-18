@@ -1,11 +1,11 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE product (
-  "name" VARCHAR(255) NOT NULL
+CREATE TABLE tickets.product (
+  "name" VARCHAR(255) UNIQUE NOT NULL
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE product;
+DROP TABLE tickets.product;
 -- +goose StatementEnd
