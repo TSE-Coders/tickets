@@ -8,6 +8,12 @@ import (
 	"github.com/TSE-Coders/tickets/internal/store"
 )
 
+type Generator struct {
+	ticketCount uint
+	storeConfig store.DBConnectionConfig
+	store       *store.DB
+}
+
 func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 	g := Generator{
 		ticketCount: 0,

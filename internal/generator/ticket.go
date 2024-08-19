@@ -4,6 +4,13 @@ const (
 	MaxDifficulty = 10
 )
 
+type Ticket struct {
+	TicketID   string `json:"ticket_id"`
+	Region     string `json:"region"`
+	Difficulty uint8  `json:"difficulty"`
+	Product    string `json:"product"`
+}
+
 func NewTicket() Ticket {
 	return Ticket{
 		TicketID:   "12345678",

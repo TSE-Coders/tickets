@@ -1,0 +1,5 @@
+services:
+  ticket:
+    build:
+      context: .
+      dockerfile: tickets.Dockerfile
