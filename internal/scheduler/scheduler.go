@@ -14,9 +14,9 @@ type Schedule struct {
 	fn          ScheduledFunc
 }
 
-func New(mi int, isRandom bool, fn ScheduledFunc) *Schedule {
+func New(maxInterval int, isRandom bool, fn ScheduledFunc) *Schedule {
 	return &Schedule{
-		maxInterval: mi,
+		maxInterval: maxInterval,
 		random:      isRandom,
 		fn:          fn,
 	}

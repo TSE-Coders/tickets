@@ -5,11 +5,14 @@ import (
 
 	"github.com/TSE-Coders/tickets/internal/app"
 	"github.com/TSE-Coders/tickets/internal/config"
+	"github.com/TSE-Coders/tickets/internal/store"
 )
 
 func main() {
 	env := config.LoadEnvVars()
-	appConfig := app.NewAppConfig()
+	storeConfig := store.NewDBConnectionConfig()
+
+	appConfig := app.NewAppConfig(storeConfig)
 	appConfig = appConfig.WithPort(env.PORT)
 
 	app, err := app.NewApp(appConfig)

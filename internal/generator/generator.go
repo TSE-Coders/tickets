@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
 
@@ -20,8 +21,14 @@ func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 
 	g.store = store
 
-	g.loadAvailableProducts()
-	g.loadAvailableRegions()
+	err = g.loadAvailableProducts()
+	if err != nil {
+		return g, err
+	}
+	err = g.loadAvailableRegions()
+	if err != nil {
+		return g, err
+	}
 
 	return g, nil
 }
@@ -55,6 +62,10 @@ func (g *Generator) loadAvailableProducts() error {
 		Products = append(Products, product.Name)
 	}
 
+	if len(products) == 0 {
+		return fmt.Errorf("no products loaded")
+	}
+
 	return nil
 }
 
@@ -65,6 +76,10 @@ func (g *Generator) loadAvailableRegions() error {
 	}
 	for _, region := range regions {
 		Regions = append(Regions, region.Name)
+	}
+
+	if len(regions) == 0 {
+		return fmt.Errorf("no regions loaded")
 	}
 
 	return nil

@@ -7,9 +7,7 @@ type AppConfig struct {
 	StoreConfig store.DBConnectionConfig
 }
 
-func NewAppConfig() AppConfig {
-	storeConfig := store.NewDBConnectionConfig()
-
+func NewAppConfig(storeConfig store.DBConnectionConfig) AppConfig {
 	return AppConfig{
 		Port:        "3000",
 		StoreConfig: storeConfig,
