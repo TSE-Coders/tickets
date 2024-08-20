@@ -29,31 +29,12 @@ func NewDBConnectionConfig() DBConnectionConfig {
 	}
 
 	// Checking for Environment Variables
-	envDatabaseDriver := os.Getenv("DATABASE_DRIVER")
-	if envDatabaseDriver != "" {
-		fmt.Println("found environment variable: DATABASE_DRIVER")
-		defaultConfig = defaultConfig.WithDatabaseDriver(envDatabaseDriver)
-	}
-	envDatabaseName := os.Getenv("DATABASE_NAME")
-	if envDatabaseName != "" {
-		fmt.Println("found environment variable: DATABASE_NAME")
-		defaultConfig = defaultConfig.WithDatabaseName(envDatabaseName)
-	}
-	envDatabaseHost := os.Getenv("DATABASE_HOST")
-	if envDatabaseHost != "" {
-		fmt.Println("found environment variable: DATABASE_HOST")
-		defaultConfig = defaultConfig.WithHost(envDatabaseHost)
-	}
-	envDatabasePassword := os.Getenv("DATABASE_PASSWORD")
-	if envDatabasePassword != "" {
-		fmt.Println("found environment variable: DATABASE_PASSWORD")
-		defaultConfig = defaultConfig.WithPassword(envDatabasePassword)
-	}
-	envDatabasePort := os.Getenv("DATABASE_PORT")
-	if envDatabaseHost != "" {
-		fmt.Println("found environment variable: DATABASE_PORT")
-		defaultConfig = defaultConfig.WithPort(envDatabasePort)
-	}
+	defaultConfig = defaultConfig.WithDatabaseDriver(checkEnv(defaultConfig.DatabaseDriver, "DATABASE_DRIVER"))
+	defaultConfig = defaultConfig.WithDatabaseName(checkEnv(defaultConfig.DatabaseName, "DATABASE_NAME"))
+	defaultConfig = defaultConfig.WithHost(checkEnv(defaultConfig.Host, "DATABASE_HOST"))
+	defaultConfig = defaultConfig.WithPassword(checkEnv(defaultConfig.Password, "DATABASE_PASSWORD"))
+	defaultConfig = defaultConfig.WithPort(checkEnv(defaultConfig.Port, "DATABASE_PORT"))
+	defaultConfig = defaultConfig.WithUser(checkEnv(defaultConfig.User, "DATABASE_USER"))
 	envDatabaseQueryBufferSize := os.Getenv("DATABASE_QUERY_BUFFER_SIZE")
 	if envDatabaseQueryBufferSize != "" {
 		sizeInt, err := strconv.Atoi(envDatabaseQueryBufferSize)
@@ -64,11 +45,8 @@ func NewDBConnectionConfig() DBConnectionConfig {
 			defaultConfig = defaultConfig.WithQueryBufferSize(uint8(sizeInt))
 		}
 	}
-	envDatabaseUser := os.Getenv("DATABASE_USER")
-	if envDatabaseUser != "" {
-		fmt.Println("found environment variable: DATABASE_USER")
-		defaultConfig = defaultConfig.WithUser(envDatabaseUser)
-	}
+
+	fmt.Printf("Config: %v+\n", defaultConfig)
 
 	return defaultConfig
 }
@@ -100,4 +78,13 @@ func (config DBConnectionConfig) WithQueryBufferSize(size uint8) DBConnectionCon
 func (config DBConnectionConfig) WithUser(user string) DBConnectionConfig {
 	config.User = user
 	return config
+}
+
+func checkEnv(currentValue, envVariable string) string {
+	value := os.Getenv(envVariable)
+	if value != "" {
+		fmt.Printf("found environment variable: %s\n", envVariable)
+		return value
+	}
+	return currentValue
 }

@@ -17,7 +17,7 @@ tasks:
     silent: true
     cmds:
       - task: dep:up
-      - sleep 2
+      - sleep 1
       - task: migrations:up
       - task: run:seed
       - air

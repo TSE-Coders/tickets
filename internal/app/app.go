@@ -46,7 +46,7 @@ func NewApp(config AppConfig) (App, error) {
 }
 
 func (a App) Run() error {
-	fmt.Println("Starting Application...")
+	fmt.Printf("Starting Application on port %s\n", a.config.Port)
 
 	for _, job := range a.BackgroundJobs {
 		job.Run()
