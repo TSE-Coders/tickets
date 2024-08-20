@@ -1,11 +1,11 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE tickets.product (
-  "name" VARCHAR(255) UNIQUE NOT NULL
+CREATE TABLE production.seed (
+  "seeded" bool
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE tickets.product;
+DROP TABLE production.seed;
 -- +goose StatementEnd

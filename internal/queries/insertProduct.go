@@ -6,7 +6,7 @@ import (
 )
 
 const InsertProductSQL = `
-	INSERT INTO tickets.Product (
+	INSERT INTO production.Product (
 		name
 	) VALUES (
 		:name

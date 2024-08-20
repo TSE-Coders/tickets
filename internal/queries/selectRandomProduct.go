@@ -1,8 +1,8 @@
 package queries
 
 const SelectRandomProductSQL = `
-	SELECT * FROM tickets.product
-	WHERE id >= floor(random() * (SELECT max(id) FROM tickets.product))
+	SELECT * FROM production.product
+	WHERE id >= floor(random() * (SELECT max(id) FROM production.product))
 	ORDER BY id
 	LIMIT 1;
 	`

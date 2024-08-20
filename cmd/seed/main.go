@@ -14,14 +14,14 @@ import (
 
 const (
 	InsertSeedStatusSQL = `
-	INSERT INTO tickets.seed (
+	INSERT INTO production.seed (
 		seeded
 	) VALUES (
 		:status
 	 );
 	`
 	SelectSeedStatusSQL = `
-	SELECT * FROM tickets.seed;
+	SELECT * FROM production.seed;
 	`
 )
 

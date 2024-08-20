@@ -6,7 +6,7 @@ import (
 )
 
 const InsertRegionSQL = `
-	INSERT INTO tickets.region (
+	INSERT INTO production.region (
 		name
 	) VALUES (
 		:name

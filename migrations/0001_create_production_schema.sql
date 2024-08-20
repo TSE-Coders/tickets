@@ -1,9 +1,9 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE SCHEMA tickets;
+CREATE SCHEMA production;
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP SCHEMA tickets CASCADE;
+DROP SCHEMA production CASCADE;
 -- +goose StatementEnd

@@ -6,7 +6,7 @@ import (
 )
 
 const SelectRegionsSQL = `
-	SELECT * FROM tickets.region;
+	SELECT * FROM production.region;
 	`
 
 type SelectRegionsResult struct {

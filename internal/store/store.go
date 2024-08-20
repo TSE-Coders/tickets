@@ -16,7 +16,7 @@ type DB struct {
 }
 
 func NewDBConnection(config DBConnectionConfig) (*DB, error) {
-	connectString := fmt.Sprintf("host=%s user=%s dbname=%s sslmode=disable password=%s", config.Host, config.User, config.DatabaseName, config.Password)
+	connectString := fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=disable password=%s", config.Host, config.Port, config.User, config.DatabaseName, config.Password)
 	connection, err := sqlx.Connect(config.DatabaseDriver, connectString)
 	if err != nil {
 		return nil, err
