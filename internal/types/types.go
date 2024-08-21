@@ -1,6 +1,6 @@
 package types
 
-type Region struct {
+type Office struct {
 	Name string `db:"name"`
 }
 

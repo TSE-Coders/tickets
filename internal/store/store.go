@@ -55,9 +55,9 @@ func (db *DB) loadDBQuery(query QueryExecutor) {
 	slog.Debug("query buffer size", "queued_queries_count", queryBufferLength)
 }
 
-func (db *DB) InsertRegion(region types.Region) error {
-	resultChan := make(chan queries.InsertRegionResult)
-	query := queries.NewInsertRegionQuery(resultChan, region)
+func (db *DB) InsertOffice(office types.Office) error {
+	resultChan := make(chan queries.InsertOfficeResult)
+	query := queries.NewInsertOfficeQuery(resultChan, office)
 	db.loadDBQuery(query)
 
 	result := <-resultChan
@@ -73,13 +73,13 @@ func (db *DB) InsertProduct(product types.Product) error {
 	return result.Err
 }
 
-func (db *DB) GetAllRegions() ([]types.Region, error) {
-	resultChan := make(chan queries.SelectRegionsResult)
-	query := queries.NewSelectRegionsQuery(resultChan)
+func (db *DB) GetAllOffices() ([]types.Office, error) {
+	resultChan := make(chan queries.SelectOfficesResult)
+	query := queries.NewSelectOfficesQuery(resultChan)
 	db.loadDBQuery(query)
 
 	result := <-resultChan
-	return result.Regions, result.Err
+	return result.Offices, result.Err
 }
 
 func (db *DB) GetAllProducts() ([]types.Product, error) {

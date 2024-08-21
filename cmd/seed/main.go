@@ -33,7 +33,7 @@ type Seed struct {
 var embeddedData []byte
 
 type SeedData struct {
-	Regions  []types.Region  `json:"regions"`
+	Offices  []types.Office  `json:"offices"`
 	Products []types.Product `json:"products"`
 }
 
@@ -49,10 +49,10 @@ func seedDB(db *store.DB, data SeedData) error {
 		os.Exit(0)
 	}
 
-	for _, region := range data.Regions {
-		err := db.InsertRegion(region)
+	for _, office := range data.Offices {
+		err := db.InsertOffice(office)
 		if err != nil {
-			return fmt.Errorf("failed to insert region: %q", err)
+			return fmt.Errorf("failed to insert office: %q", err)
 		}
 	}
 

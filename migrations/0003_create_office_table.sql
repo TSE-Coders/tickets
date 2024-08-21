@@ -1,11 +1,11 @@
 -- +goose Up
 -- +goose StatementBegin
-CREATE TABLE production.region (
+CREATE TABLE production.office (
   "name" VARCHAR(255) UNIQUE NOT NULL
 );
 -- +goose StatementEnd
 
 -- +goose Down
 -- +goose StatementBegin
-DROP TABLE production.region;
+DROP TABLE production.office;
 -- +goose StatementEnd

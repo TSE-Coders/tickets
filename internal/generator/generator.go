@@ -31,7 +31,7 @@ func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 	if err != nil {
 		return g, err
 	}
-	err = g.loadAvailableRegions()
+	err = g.loadAvailableOffices()
 	if err != nil {
 		return g, err
 	}
@@ -47,12 +47,12 @@ func (g *Generator) GenetateTicket() Ticket {
 }
 
 func (g *Generator) GenetateRandomTicket() Ticket {
-	randomRegion := GetRandomRegion()
+	randomOffice := GetRandomOffice()
 	randomProduct := GetRandomProduct()
 	randomDifficulty := rand.Intn(MaxDifficulty)
 
 	tick := g.GenetateTicket().
-		WithRegion(randomRegion).
+		WithOffice(randomOffice).
 		WithProduct(randomProduct).
 		WithDifficulty(uint8(randomDifficulty))
 
@@ -75,17 +75,17 @@ func (g *Generator) loadAvailableProducts() error {
 	return nil
 }
 
-func (g *Generator) loadAvailableRegions() error {
-	regions, err := g.store.GetAllRegions()
+func (g *Generator) loadAvailableOffices() error {
+	offices, err := g.store.GetAllOffices()
 	if err != nil {
 		return nil
 	}
-	for _, region := range regions {
-		Regions = append(Regions, region.Name)
+	for _, office := range offices {
+		Offices = append(Offices, office.Name)
 	}
 
-	if len(regions) == 0 {
-		return fmt.Errorf("no regions loaded")
+	if len(offices) == 0 {
+		return fmt.Errorf("no offices loaded")
 	}
 
 	return nil
