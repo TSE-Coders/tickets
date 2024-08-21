@@ -46,17 +46,23 @@ func (g *Generator) GenetateTicket() Ticket {
 	return tick
 }
 
-func (g *Generator) GenetateRandomTicket() Ticket {
-	randomOffice := GetRandomOffice()
-	randomProduct := GetRandomProduct()
+func (g *Generator) GenetateRandomTicket() (Ticket, error) {
+	randomOffice, err := g.store.GetRandomOffice()
+	if err != nil {
+		return Ticket{}, err
+	}
+	randomProduct, err := g.store.GetRandomProduct()
+	if err != nil {
+		return Ticket{}, err
+	}
 	randomDifficulty := rand.Intn(MaxDifficulty)
 
 	tick := g.GenetateTicket().
-		WithOffice(randomOffice).
-		WithProduct(randomProduct).
+		WithOffice(randomOffice.Name).
+		WithProduct(randomProduct.Name).
 		WithDifficulty(uint8(randomDifficulty))
 
-	return tick
+	return tick, nil
 }
 
 func (g *Generator) loadAvailableProducts() error {

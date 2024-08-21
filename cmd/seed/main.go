@@ -40,7 +40,7 @@ type SeedData struct {
 func seedDB(db *store.DB, data SeedData) error {
 	rows, err := db.Connection.Queryx(SelectSeedStatusSQL)
 	if err != nil {
-		return fmt.Errorf("failed to check seed table: %q", err)
+		return fmt.Errorf("failed to check seed table: %s", err.Error())
 	}
 	defer rows.Close()
 
@@ -52,14 +52,14 @@ func seedDB(db *store.DB, data SeedData) error {
 	for _, office := range data.Offices {
 		err := db.InsertOffice(office)
 		if err != nil {
-			return fmt.Errorf("failed to insert office: %q", err)
+			return fmt.Errorf("failed to insert office: %s", err.Error())
 		}
 	}
 
 	for _, product := range data.Products {
 		err := db.InsertProduct(product)
 		if err != nil {
-			return fmt.Errorf("failed to insert product: %q", err)
+			return fmt.Errorf("failed to insert product: %s", err.Error())
 		}
 	}
 
@@ -68,7 +68,7 @@ func seedDB(db *store.DB, data SeedData) error {
 	}
 	_, err = db.Connection.NamedQuery(InsertSeedStatusSQL, seedStatus)
 	if err != nil {
-		return fmt.Errorf("failed to update seed table: %q", err)
+		return fmt.Errorf("failed to update seed table: %s", err.Error())
 	}
 
 	return nil
@@ -79,7 +79,7 @@ func getSeedData() SeedData {
 
 	err := json.Unmarshal(embeddedData, &seedData)
 	if err != nil {
-		log.Fatalf("failed to unmarshal the data: %q", err)
+		log.Fatalf("failed to unmarshal the data: %s", err.Error())
 	}
 
 	return seedData
@@ -88,7 +88,7 @@ func getSeedData() SeedData {
 func main() {
 	db, err := store.NewDefaultDBConnection()
 	if err != nil {
-		log.Fatalf("failed to connect to the database: %q", err)
+		log.Fatalf("failed to connect to the database: %s", err.Error())
 	}
 	seedData := getSeedData()
 	err = seedDB(db, seedData)

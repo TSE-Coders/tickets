@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/TSE-Coders/tickets/internal/app"
@@ -16,8 +15,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize the Application: %s", err)
 	}
-
-	fmt.Println("Yoooo")
 
 	if err := app.Run(); err != nil {
 		log.Fatalf("Application Crashed: %s", err)

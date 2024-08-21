@@ -33,7 +33,7 @@ func (s Schedule) Run() {
 			time.Sleep(time.Second * time.Duration(wait))
 			err := s.fn()
 			if err != nil {
-				fmt.Printf("Failed to run scheduled function: %q\n", err)
+				fmt.Printf("failed to run scheduled function: %s\n", err.Error())
 			}
 		}
 	}()

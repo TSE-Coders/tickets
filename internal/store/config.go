@@ -39,7 +39,7 @@ func NewDBConnectionConfig() DBConnectionConfig {
 	if envDatabaseQueryBufferSize != "" {
 		sizeInt, err := strconv.Atoi(envDatabaseQueryBufferSize)
 		if err != nil {
-			fmt.Printf("failed to convert environment variable 'DATABASE_QUERY_BUFFER_SIZE' to an integer, using the default: %q", err)
+			fmt.Printf("failed to convert environment variable 'DATABASE_QUERY_BUFFER_SIZE' to an integer, using the default: %s", err.Error())
 		} else {
 			fmt.Println("found environment variable: DATABASE_QUERY_BUFFER_SIZE")
 			defaultConfig = defaultConfig.WithQueryBufferSize(uint8(sizeInt))

@@ -90,3 +90,21 @@ func (db *DB) GetAllProducts() ([]types.Product, error) {
 	result := <-resultChan
 	return result.Products, result.Err
 }
+
+func (db *DB) GetRandomOffice() (types.Office, error) {
+	resultChan := make(chan queries.SelectRandomOfficeResult)
+	query := queries.NewSelectRandomOfficeQuery(resultChan)
+	db.loadDBQuery(query)
+
+	result := <-resultChan
+	return result.Office, result.Err
+}
+
+func (db *DB) GetRandomProduct() (types.Product, error) {
+	resultChan := make(chan queries.SelectRandomProductResult)
+	query := queries.NewSelectRandomProductQuery(resultChan)
+	db.loadDBQuery(query)
+
+	result := <-resultChan
+	return result.Product, result.Err
+}
