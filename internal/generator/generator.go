@@ -1,11 +1,11 @@
 package generator
 
 import (
-	"fmt"
 	"math/rand"
 	"strconv"
 
 	"github.com/TSE-Coders/tickets/internal/store"
+	"github.com/TSE-Coders/tickets/internal/types"
 )
 
 type Generator struct {
@@ -27,35 +27,26 @@ func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 
 	g.store = store
 
-	err = g.loadAvailableProducts()
-	if err != nil {
-		return g, err
-	}
-	err = g.loadAvailableOffices()
-	if err != nil {
-		return g, err
-	}
-
 	return g, nil
 }
 
-func (g *Generator) GenetateTicket() Ticket {
+func (g *Generator) GenetateTicket() types.Ticket {
 	g.ticketCount += 1
 
-	tick := NewTicket().WithTicketID(strconv.Itoa(int(g.ticketCount)))
+	tick := types.NewTicket().WithId(strconv.Itoa(int(g.ticketCount)))
 	return tick
 }
 
-func (g *Generator) GenetateRandomTicket() (Ticket, error) {
+func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
 	randomOffice, err := g.store.GetRandomOffice()
 	if err != nil {
-		return Ticket{}, err
+		return types.Ticket{}, err
 	}
 	randomProduct, err := g.store.GetRandomProduct()
 	if err != nil {
-		return Ticket{}, err
+		return types.Ticket{}, err
 	}
-	randomDifficulty := rand.Intn(MaxDifficulty)
+	randomDifficulty := rand.Intn(types.MaxTicketDifficulty)
 
 	tick := g.GenetateTicket().
 		WithOffice(randomOffice.Name).
@@ -63,36 +54,4 @@ func (g *Generator) GenetateRandomTicket() (Ticket, error) {
 		WithDifficulty(uint8(randomDifficulty))
 
 	return tick, nil
-}
-
-func (g *Generator) loadAvailableProducts() error {
-	products, err := g.store.GetAllProducts()
-	if err != nil {
-		return nil
-	}
-	for _, product := range products {
-		Products = append(Products, product.Name)
-	}
-
-	if len(products) == 0 {
-		return fmt.Errorf("no products loaded")
-	}
-
-	return nil
-}
-
-func (g *Generator) loadAvailableOffices() error {
-	offices, err := g.store.GetAllOffices()
-	if err != nil {
-		return nil
-	}
-	for _, office := range offices {
-		Offices = append(Offices, office.Name)
-	}
-
-	if len(offices) == 0 {
-		return fmt.Errorf("no offices loaded")
-	}
-
-	return nil
 }
