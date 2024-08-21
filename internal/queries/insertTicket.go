@@ -30,6 +30,7 @@ type InsertTicketQuery struct {
 func NewInsertTicketQuery(result chan InsertTicketResult, ticket types.Ticket) *InsertTicketQuery {
 	return &InsertTicketQuery{
 		SQL:    []string{InsertTicketSQL},
+		Ticket: ticket,
 		Result: result,
 	}
 }

@@ -27,7 +27,7 @@ func NewApp(config AppConfig) (App, error) {
 			fmt.Printf("failed to generate ticket: %s\n", err.Error())
 			return err
 		}
-		fmt.Printf("Ticket Created: %+v\n", t)
+		fmt.Printf("Ticket Created: %d %+v\n", a.Generator.TicketCount, t)
 		return nil
 	})
 	a.AddBackgroundJob(*job)

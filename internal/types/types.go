@@ -21,7 +21,6 @@ type Ticket struct {
 
 func NewTicket() Ticket {
 	return Ticket{
-		Id:         "12345678",
 		Office:     "NYC",
 		Difficulty: 5,
 		Product:    "APM",

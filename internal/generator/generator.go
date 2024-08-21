@@ -1,22 +1,22 @@
 package generator
 
 import (
+	"fmt"
 	"math/rand"
-	"strconv"
 
 	"github.com/TSE-Coders/tickets/internal/store"
 	"github.com/TSE-Coders/tickets/internal/types"
 )
 
 type Generator struct {
-	ticketCount uint
+	TicketCount uint
 	storeConfig store.DBConnectionConfig
 	store       *store.DB
 }
 
 func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 	g := Generator{
-		ticketCount: 0,
+		TicketCount: 0,
 		storeConfig: storeConfig,
 	}
 
@@ -31,10 +31,11 @@ func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 }
 
 func (g *Generator) GenetateTicket() types.Ticket {
-	g.ticketCount += 1
+	g.TicketCount += 1
 
-	tick := types.NewTicket().WithId(strconv.Itoa(int(g.ticketCount)))
-	return tick
+	ticket := types.NewTicket()
+
+	return ticket
 }
 
 func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
@@ -48,10 +49,14 @@ func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
 	}
 	randomDifficulty := rand.Intn(types.MaxTicketDifficulty)
 
-	tick := g.GenetateTicket().
+	ticket := g.GenetateTicket().
 		WithOffice(randomOffice.Name).
 		WithProduct(randomProduct.Name).
 		WithDifficulty(uint8(randomDifficulty))
 
-	return tick, nil
+	if err := g.store.InsertTicket(ticket); err != nil {
+		return ticket, fmt.Errorf("failed to insert ticket: %s", err.Error())
+	}
+
+	return ticket, nil
 }
