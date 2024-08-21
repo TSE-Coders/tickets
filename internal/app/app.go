@@ -23,7 +23,7 @@ func NewApp(config AppConfig) (App, error) {
 	// Setup App's Background Job
 	job := scheduler.New(3, true, func() error {
 		t := a.Generator.GenetateRandomTicket()
-		fmt.Printf("Ticket Created: %s\n", t.TicketID)
+		fmt.Printf("Ticket Created: %+v\n", t)
 		return nil
 	})
 	a.AddBackgroundJob(*job)

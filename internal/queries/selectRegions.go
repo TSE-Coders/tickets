@@ -42,7 +42,7 @@ func (q SelectRegionsQuery) Execute(dbConnection *sqlx.DB) {
 	defer rows.Close()
 
 	region := types.Region{}
-	if rows.Next() {
+	for rows.Next() {
 		err = rows.StructScan(&region)
 		if err != nil {
 			q.Result <- SelectRegionsResult{

@@ -43,7 +43,7 @@ func (q SelectProductsQuery) Execute(dbConnection *sqlx.DB) {
 	defer rows.Close()
 
 	product := types.Product{}
-	if rows.Next() {
+	for rows.Next() {
 		err = rows.StructScan(&product)
 		if err != nil {
 			q.Result <- SelectProductsResult{

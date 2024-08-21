@@ -46,8 +46,6 @@ func NewDBConnectionConfig() DBConnectionConfig {
 		}
 	}
 
-	fmt.Printf("Config: %v+\n", defaultConfig)
-
 	return defaultConfig
 }
 
