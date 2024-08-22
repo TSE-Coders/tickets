@@ -78,13 +78,13 @@ func (db *DB) InsertProduct(product types.Product) error {
 	return result.Err
 }
 
-func (db *DB) InsertTicket(ticket types.Ticket) error {
+func (db *DB) InsertTicket(ticket types.Ticket) (int, error) {
 	resultChan := make(chan queries.InsertTicketResult)
 	query := queries.NewInsertTicketQuery(resultChan, ticket)
 	db.loadDBQuery(query)
 
 	result := <-resultChan
-	return result.Err
+	return result.Id, result.Err
 }
 
 func (db *DB) GetAllOffices() ([]types.Office, error) {

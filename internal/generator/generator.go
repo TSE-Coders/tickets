@@ -3,6 +3,7 @@ package generator
 import (
 	"fmt"
 	"math/rand"
+	"strconv"
 
 	"github.com/TSE-Coders/tickets/internal/store"
 	"github.com/TSE-Coders/tickets/internal/types"
@@ -54,9 +55,12 @@ func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
 		WithProduct(randomProduct.Name).
 		WithDifficulty(uint8(randomDifficulty))
 
-	if err := g.store.InsertTicket(ticket); err != nil {
+	newTicketId, err := g.store.InsertTicket(ticket)
+	if err != nil {
 		return ticket, fmt.Errorf("failed to insert ticket: %s", err.Error())
 	}
+
+	ticket = ticket.WithId(strconv.Itoa(newTicketId))
 
 	return ticket, nil
 }

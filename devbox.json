@@ -4,7 +4,8 @@
     "go@1.22.5",
     "go-task@3.38.0",
     "air@1.52.3",
-    "goose@3.21.1"
+    "goose@3.21.1",
+    "postgresql@latest"
   ],
   "shell": {
     "init_hook": [],

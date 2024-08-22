@@ -1,6 +1,8 @@
 package queries
 
 import (
+	"fmt"
+
 	"github.com/TSE-Coders/tickets/internal/types"
 	"github.com/jmoiron/sqlx"
 )
@@ -14,10 +16,11 @@ const InsertTicketSQL = `
 		:office,
 		:difficulty,
 		:product
-	 );
+	 ) RETURNING id;
 	`
 
 type InsertTicketResult struct {
+	Id  int
 	Err error
 }
 
@@ -40,14 +43,28 @@ func (q InsertTicketQuery) GetQuery() []string {
 }
 
 func (q InsertTicketQuery) Execute(dbConnection *sqlx.DB) {
-	rows, err := dbConnection.NamedQuery(q.SQL[0], q.Ticket)
+	rows, err := dbConnection.NamedQuery(InsertTicketSQL, q.Ticket)
 	if err != nil {
 		q.Result <- InsertTicketResult{
 			Err: err,
 		}
 	}
 	defer rows.Close()
+
+	newTicketId := struct {
+		Id int `db:"id"`
+	}{}
+	for rows.Next() {
+		err = rows.StructScan(&newTicketId)
+		if err != nil {
+			q.Result <- InsertTicketResult{
+				Err: fmt.Errorf("failed to get id from the inserted ticket"),
+			}
+		}
+	}
+
 	q.Result <- InsertTicketResult{
+		Id:  newTicketId.Id,
 		Err: nil,
 	}
 }
