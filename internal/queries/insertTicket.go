@@ -40,12 +40,13 @@ func (q InsertTicketQuery) GetQuery() []string {
 }
 
 func (q InsertTicketQuery) Execute(dbConnection *sqlx.DB) {
-	_, err := dbConnection.NamedQuery(q.SQL[0], q.Ticket)
+	rows, err := dbConnection.NamedQuery(q.SQL[0], q.Ticket)
 	if err != nil {
 		q.Result <- InsertTicketResult{
 			Err: err,
 		}
 	}
+	defer rows.Close()
 	q.Result <- InsertTicketResult{
 		Err: nil,
 	}

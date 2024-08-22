@@ -13,10 +13,19 @@ tasks:
     cmds:
       - task --list-all
   
-  dev:
+  dev:up:
     silent: true
     cmds:
       - task: dep:up
+      - sleep 1
+      - task: migrations:up
+      - task: run:seed
+      - air
+
+  dev:reset:
+    silent: true
+    cmds:
+      - task: dep:reset
       - sleep 1
       - task: migrations:up
       - task: run:seed

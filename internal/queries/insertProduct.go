@@ -36,12 +36,13 @@ func (q InsertProductQuery) GetQuery() []string {
 }
 
 func (q InsertProductQuery) Execute(dbConnection *sqlx.DB) {
-	_, err := dbConnection.NamedQuery(q.SQL[0], q.Product)
+	rows, err := dbConnection.NamedQuery(q.SQL[0], q.Product)
 	if err != nil {
 		q.Result <- InsertProductResult{
 			Err: err,
 		}
 	}
+	defer rows.Close()
 	q.Result <- InsertProductResult{
 		Err: nil,
 	}

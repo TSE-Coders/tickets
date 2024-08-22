@@ -3,6 +3,7 @@ package store
 import (
 	"fmt"
 	"log/slog"
+	"time"
 
 	"github.com/TSE-Coders/tickets/internal/queries"
 	"github.com/TSE-Coders/tickets/internal/types"
@@ -21,6 +22,9 @@ func NewDBConnection(config DBConnectionConfig) (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	connection.SetMaxOpenConns(20)
+	connection.SetMaxIdleConns(20)
+	connection.SetConnMaxLifetime(5 * time.Minute)
 
 	db := &DB{
 		Connection:  connection,
@@ -29,6 +33,7 @@ func NewDBConnection(config DBConnectionConfig) (*DB, error) {
 
 	go db.connectionLoop()
 
+	fmt.Println("DB Connection created")
 	return db, nil
 }
 
