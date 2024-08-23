@@ -39,7 +39,7 @@ func NewApp(config AppConfig) (App, error) {
 	a.Server.HideBanner = true
 	a.Server.HidePort = true
 	a.Server.GET("/api/health-check", a.healthCheck)
-	a.Server.GET("/api/tickets/random", a.getRandomTicket)
+	a.Server.GET("/api/tickets/game", a.getGameTicket)
 	a.Server.POST("/api/tickets", a.submitTicket)
 
 	return a, nil

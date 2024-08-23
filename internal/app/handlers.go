@@ -13,7 +13,7 @@ func (a App) healthCheck(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
 }
 
-func (a *App) getRandomTicket(c echo.Context) error {
+func (a *App) getGameTicket(c echo.Context) error {
 	ticket, err := a.Generator.GenetateGameTicket()
 	if err != nil {
 		return c.JSON(500, struct {
