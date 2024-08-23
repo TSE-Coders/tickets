@@ -11,8 +11,8 @@ import (
 
 type Generator struct {
 	TicketCount uint
+	Store       *store.DB
 	storeConfig store.DBConnectionConfig
-	store       *store.DB
 }
 
 func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
@@ -26,25 +26,38 @@ func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 		return g, err
 	}
 
-	g.store = store
+	g.Store = store
 
 	return g, nil
 }
 
 func (g *Generator) GenetateTicket() types.Ticket {
 	g.TicketCount += 1
-
 	ticket := types.NewTicket()
 
 	return ticket
 }
 
-func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
-	randomOffice, err := g.store.GetRandomOffice()
+func (g *Generator) GenetateGameTicket() (types.Ticket, error) {
+	randomProduct, err := g.Store.GetRandomProduct()
 	if err != nil {
 		return types.Ticket{}, err
 	}
-	randomProduct, err := g.store.GetRandomProduct()
+	randomDifficulty := rand.Intn(types.MaxTicketDifficulty)
+
+	ticket := g.GenetateTicket().
+		WithProduct(randomProduct.Name).
+		WithDifficulty(uint8(randomDifficulty))
+
+	return ticket, nil
+}
+
+func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
+	randomOffice, err := g.Store.GetRandomOffice()
+	if err != nil {
+		return types.Ticket{}, err
+	}
+	randomProduct, err := g.Store.GetRandomProduct()
 	if err != nil {
 		return types.Ticket{}, err
 	}
@@ -55,7 +68,7 @@ func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
 		WithProduct(randomProduct.Name).
 		WithDifficulty(uint8(randomDifficulty))
 
-	newTicketId, err := g.store.InsertTicket(ticket)
+	newTicketId, err := g.Store.InsertTicket(ticket)
 	if err != nil {
 		return ticket, fmt.Errorf("failed to insert ticket: %s", err.Error())
 	}

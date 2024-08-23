@@ -36,7 +36,7 @@ func (q InsertOfficeQuery) GetQuery() []string {
 }
 
 func (q InsertOfficeQuery) Execute(dbConnection *sqlx.DB) {
-	rows, err := dbConnection.NamedQuery(q.SQL[0], q.Office)
+	rows, err := dbConnection.NamedQuery(InsertOfficeSQL, q.Office)
 	if err != nil {
 		q.Result <- InsertOfficeResult{
 			Err: err,

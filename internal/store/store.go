@@ -11,6 +11,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type QueryExecutor interface {
+	GetQuery() []string
+	Execute(*sqlx.DB)
+}
+
 type DB struct {
 	Connection  *sqlx.DB
 	QueryBuffer chan QueryExecutor

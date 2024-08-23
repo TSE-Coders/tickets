@@ -22,7 +22,7 @@ func New(maxInterval int, isRandom bool, fn ScheduledFunc) *Schedule {
 	}
 }
 
-func (s Schedule) Run() {
+func (s *Schedule) Run() {
 	go func() {
 		randomNumberGenerator := rand.New(rand.NewSource(time.Now().Unix()))
 		for {

@@ -36,7 +36,7 @@ func (q InsertProductQuery) GetQuery() []string {
 }
 
 func (q InsertProductQuery) Execute(dbConnection *sqlx.DB) {
-	rows, err := dbConnection.NamedQuery(q.SQL[0], q.Product)
+	rows, err := dbConnection.NamedQuery(InsertProductSQL, q.Product)
 	if err != nil {
 		q.Result <- InsertProductResult{
 			Err: err,
