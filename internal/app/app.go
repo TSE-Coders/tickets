@@ -21,9 +21,9 @@ func NewApp(config AppConfig) (App, error) {
 	}
 
 	// Setup App's Background Job
-	for count := range 2 {
+	for count := range 5 {
 		a.addBackgroundJob(
-			*scheduler.New(30, true, a.ticketGeneratorBackgroundJob(count)),
+			*scheduler.New(10, true, a.ticketGeneratorBackgroundJob(count)),
 		)
 	}
 
@@ -67,7 +67,7 @@ func (a *App) ticketGeneratorBackgroundJob(jobId int) func() error {
 			fmt.Printf("failed to generate ticket: %s\n", err.Error())
 			return err
 		}
-		fmt.Printf("Job %d: Ticket Created: %d %+v\n", jobId, a.Generator.TicketCount, t)
+		fmt.Printf("Job %d: Ticket Created: %+v\n", jobId, t)
 		return nil
 	}
 }

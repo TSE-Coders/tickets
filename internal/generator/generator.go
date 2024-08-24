@@ -10,14 +10,12 @@ import (
 )
 
 type Generator struct {
-	TicketCount uint
 	Store       *store.DB
 	storeConfig store.DBConnectionConfig
 }
 
 func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 	g := Generator{
-		TicketCount: 0,
 		storeConfig: storeConfig,
 	}
 
@@ -32,7 +30,6 @@ func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
 }
 
 func (g *Generator) GenetateTicket() types.Ticket {
-	g.TicketCount += 1
 	ticket := types.NewTicket()
 
 	return ticket
