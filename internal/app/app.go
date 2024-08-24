@@ -9,58 +9,65 @@ import (
 )
 
 type App struct {
-	config AppConfig
-}
-
-type AppConfig struct {
-	Server         *echo.Echo
-	Port           string
-	Generator      generator.Generator
 	BackgroundJobs []scheduler.Schedule
+	Generator      generator.Generator
+	Server         *echo.Echo
+	config         AppConfig
 }
 
-func NewAppConfig() AppConfig {
-	return AppConfig{
-		Server:    echo.New(),
-		Port:      "3000",
-		Generator: generator.NewGenerator(),
-	}
-}
-
-func (a AppConfig) WithPort(p string) AppConfig {
-	a.Port = p
-	return a
-}
-
-func (a *App) AddBackgroundJob(job scheduler.Schedule) {
-	a.config.BackgroundJobs = append(a.config.BackgroundJobs, job)
-}
-
-func NewAppServer(config AppConfig) App {
+func NewApp(config AppConfig) (App, error) {
 	a := App{
-		config,
+		config: config,
 	}
 
-	a.config.Server.GET("/health-check", a.healthCheck)
-	a.config.Server.GET("/tickets/random", a.getRandomTicket)
+	// Setup App's Background Job
+	for count := range 5 {
+		a.addBackgroundJob(
+			*scheduler.New(10, true, a.ticketGeneratorBackgroundJob(count)),
+		)
+	}
 
-	job := scheduler.New(15, true, func() error {
-		t := a.config.Generator.GenetateRandomTicket()
-		fmt.Printf("Ticket Created: %s\n", t.TicketID)
+	// Setup App's Ticket Generator
+	g, err := generator.NewGenerator(a.config.StoreConfig)
+	if err != nil {
+		return a, err
+	}
+	a.Generator = g
 
-		return nil
-	})
+	// Setup App's HTTP Server handlers
+	a.Server = echo.New()
+	a.Server.HideBanner = true
+	a.Server.HidePort = true
+	a.Server.GET("/api/health-check", a.healthCheck)
+	a.Server.GET("/api/tickets/game", a.getGameTicket)
+	a.Server.POST("/api/tickets", a.submitTicket)
 
-	a.AddBackgroundJob(*job)
-
-	return a
+	return a, nil
 }
 
 func (a App) Run() error {
-	for _, job := range a.config.BackgroundJobs {
+	fmt.Printf("Starting Application on port %s\n", a.config.Port)
+
+	for _, job := range a.BackgroundJobs {
 		job.Run()
 	}
 
 	port := fmt.Sprintf(":%s", a.config.Port)
-	return a.config.Server.Start(port)
+	return a.Server.Start(port)
+}
+
+func (a *App) addBackgroundJob(job scheduler.Schedule) {
+	a.BackgroundJobs = append(a.BackgroundJobs, job)
+}
+
+func (a *App) ticketGeneratorBackgroundJob(jobId int) func() error {
+	return func() error {
+		t, err := a.Generator.GenetateRandomTicket()
+		if err != nil {
+			fmt.Printf("failed to generate ticket: %s\n", err.Error())
+			return err
+		}
+		fmt.Printf("Job %d: Ticket Created: %+v\n", jobId, t)
+		return nil
+	}
 }

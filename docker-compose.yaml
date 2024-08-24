@@ -1,0 +1,13 @@
+services:
+  store:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      - DATABASE_USER=$DATABASE_USER
+      - DATABASE_PASSWORD=$DATABASE_PASSWORD
+      - DATABASE_NAME=$DATABASE_NAME
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+
+    volumes:
+      - "$PWD/docker/postgres/init.sh:/docker-entrypoint-initdb.d/init.sh"

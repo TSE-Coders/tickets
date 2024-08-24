@@ -14,15 +14,15 @@ type Schedule struct {
 	fn          ScheduledFunc
 }
 
-func New(mi int, isRandom bool, fn ScheduledFunc) *Schedule {
+func New(maxInterval int, isRandom bool, fn ScheduledFunc) *Schedule {
 	return &Schedule{
-		maxInterval: mi,
+		maxInterval: maxInterval,
 		random:      isRandom,
 		fn:          fn,
 	}
 }
 
-func (s Schedule) Run() {
+func (s *Schedule) Run() {
 	go func() {
 		randomNumberGenerator := rand.New(rand.NewSource(time.Now().Unix()))
 		for {
@@ -33,7 +33,7 @@ func (s Schedule) Run() {
 			time.Sleep(time.Second * time.Duration(wait))
 			err := s.fn()
 			if err != nil {
-				fmt.Printf("Failed to run scheduled function: %q\n", err)
+				fmt.Printf("failed to run scheduled function: %s\n", err.Error())
 			}
 		}
 	}()

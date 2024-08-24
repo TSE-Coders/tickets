@@ -1,32 +1,76 @@
 package generator
 
 import (
+	"fmt"
 	"math/rand"
 	"strconv"
+
+	"github.com/TSE-Coders/tickets/internal/store"
+	"github.com/TSE-Coders/tickets/internal/types"
 )
 
-func NewGenerator() Generator {
-	return Generator{
-		ticketCount: 0,
+type Generator struct {
+	Store       *store.DB
+	storeConfig store.DBConnectionConfig
+}
+
+func NewGenerator(storeConfig store.DBConnectionConfig) (Generator, error) {
+	g := Generator{
+		storeConfig: storeConfig,
 	}
+
+	store, err := store.NewDBConnection(storeConfig)
+	if err != nil {
+		return g, err
+	}
+
+	g.Store = store
+
+	return g, nil
 }
 
-func (g *Generator) GenetateTicket() Ticket {
-	g.ticketCount += 1
+func (g *Generator) GenetateTicket() types.Ticket {
+	ticket := types.NewTicket()
 
-	tick := NewTicket().WithTicketID(strconv.Itoa(int(g.ticketCount)))
-	return tick
+	return ticket
 }
 
-func (g *Generator) GenetateRandomTicket() Ticket {
-	randomRegion := Regions.GetRandom()
-	randomProduct := Products.GetRandom()
-	randomDifficulty := rand.Intn(MaxDifficulty)
+func (g *Generator) GenetateGameTicket() (types.Ticket, error) {
+	randomProduct, err := g.Store.GetRandomProduct()
+	if err != nil {
+		return types.Ticket{}, err
+	}
+	randomDifficulty := rand.Intn(types.MaxTicketDifficulty)
 
-	tick := g.GenetateTicket().
-		WithRegion(randomRegion).
-		WithProduct(randomProduct).
+	ticket := g.GenetateTicket().
+		WithProduct(randomProduct.Name).
 		WithDifficulty(uint8(randomDifficulty))
 
-	return tick
+	return ticket, nil
+}
+
+func (g *Generator) GenetateRandomTicket() (types.Ticket, error) {
+	randomOffice, err := g.Store.GetRandomOffice()
+	if err != nil {
+		return types.Ticket{}, err
+	}
+	randomProduct, err := g.Store.GetRandomProduct()
+	if err != nil {
+		return types.Ticket{}, err
+	}
+	randomDifficulty := rand.Intn(types.MaxTicketDifficulty)
+
+	ticket := g.GenetateTicket().
+		WithOffice(randomOffice.Name).
+		WithProduct(randomProduct.Name).
+		WithDifficulty(uint8(randomDifficulty))
+
+	newTicketId, err := g.Store.InsertTicket(ticket)
+	if err != nil {
+		return ticket, fmt.Errorf("failed to insert ticket: %s", err.Error())
+	}
+
+	ticket = ticket.WithId(strconv.Itoa(newTicketId))
+
+	return ticket, nil
 }

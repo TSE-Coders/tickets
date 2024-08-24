@@ -3,16 +3,12 @@
   "packages": [
     "go@1.22.5",
     "go-task@3.38.0",
-    "air@1.52.3"
+    "air@1.52.3",
+    "goose@3.21.1",
+    "postgresql@latest"
   ],
   "shell": {
-    "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
-    ],
-    "scripts": {
-      "dev": [
-        "task dev"
-      ]
-    }
+    "init_hook": [],
+    "scripts":   {}
   }
 }

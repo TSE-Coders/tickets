@@ -2,14 +2,96 @@
 
 version: '3'
 
+dotenv: ["dev.env"]
+
+vars:
+  CONNSTRING: postgresql://postgres:$DATABASE_PASSWORD@$DATABASE_HOST:$DATABASE_PORT/$DATABASE_NAME
+
 tasks:
   default:
+    silent: true
     cmds:
       - task --list-all
-    silent: true
   
-  dev:
-    dotenv: ['dev.env']
-    cmds:
-      - air
+  dev: 
     silent: true
+    cmds:
+      - task: migrations:up
+      - task: run:seed
+      - air
+      
+  dev:up:
+    silent: true
+    cmds:
+      - task: dep:up
+      - sleep 2
+      - task: dev
+
+  dev:reset:
+    silent: true
+    cmds:
+      - task: dep:reset
+      - sleep 2
+      - task: dev
+
+  build:seed:
+    silent: true
+    cmds:
+      - go build -o ./tmp/seed cmd/seed/main.go
+
+  build:tickets:
+    silent: true
+    cmds:
+      - go build -o ./tmp/seed cmd/tickets/main.go
+
+  run:seed:
+    silent: true
+    cmds:
+      - task: build:seed
+      - ./tmp/seed
+
+  run:tickets:
+    silent: true
+    cmds:
+      - task: build:tickets
+      - ./tmp/tickets
+
+  dep:up:
+    silent: true
+    cmds:
+      - docker compose up -d
+
+  dep:down:
+    silent: true
+    cmds:
+      - docker compose down
+
+  dep:reset:
+    silent: true
+    cmds:
+      - task: dep:down
+      - task: dep:up
+
+  migrations:new:
+    silent: true
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: migrations
+    cmds:
+    - GOOSE_DBSTRING={{.CONNSTRING}} goose create {{.CLI_ARGS}} sql
+
+  migrations:up:
+    silent: true
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: migrations
+    cmds:
+    - GOOSE_DBSTRING={{.CONNSTRING}} goose up
+
+  migrations:down:
+    silent: true
+    env:
+      GOOSE_DRIVER: postgres
+      GOOSE_MIGRATION_DIR: migrations
+    cmds:
+    - GOOSE_DBSTRING={{.CONNSTRING}} goose down
